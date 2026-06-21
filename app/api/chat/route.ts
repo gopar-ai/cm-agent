@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { streamChatWithAgent, Message } from '@/lib/anthropic';
-import type { MemoryEntry } from '@/lib/agent-memory';
+import { buildMemorySummary, type MemoryEntry } from '@/lib/agent-memory';
+
+const MAX_HISTORY_MESSAGES = 10;
+
+// Caché del resumen de preferencias: solo se recalcula si el número de
+// entradas en cm_memoria cambió desde la última solicitud.
+let cachedMemoryCount = -1;
+let cachedMemorySummary: string | null = null;
+
+function getMemorySummary(memoria?: MemoryEntry[]): string | null {
+  const count = memoria?.length ?? 0;
+  if (count !== cachedMemoryCount) {
+    cachedMemorySummary = buildMemorySummary(memoria ?? []);
+    cachedMemoryCount = count;
+  }
+  return cachedMemorySummary;
+}
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -17,17 +33,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Mensajes inválidos' }, { status: 400 });
   }
 
+  const recentMessages =
+    messages.length > MAX_HISTORY_MESSAGES ? messages.slice(-MAX_HISTORY_MESSAGES) : messages;
+
+  const memorySummary = getMemorySummary(memoria);
+
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       try {
         await streamChatWithAgent(
-          messages,
+          recentMessages,
           (chunk) => {
             controller.enqueue(encoder.encode(chunk));
           },
           agentContext,
-          memoria
+          memorySummary
         );
       } catch {
         controller.enqueue(encoder.encode('\n\nHubo un error al generar la respuesta. Intenta de nuevo.'));
