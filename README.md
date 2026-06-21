@@ -2,8 +2,6 @@
 
 Agente de community manager con IA para LinkedIn: genera, itera y programa contenido para Detecta Security mediante un flujo conversacional de varias fases, con aprendizaje silencioso de preferencias editoriales.
 
-![Demo de CM Agent](docs/screenshots/demo.gif)
-
 ## Cómo funciona
 
 ```
@@ -20,6 +18,8 @@ Claude (Anthropic, con Web Search nativo)
      ▼
 Panel editable (titulares, copy, hashtags) ──► Calendario / Borradores (localStorage)
 ```
+
+![Demo de CM Agent](docs/screenshots/demo.gif)
 
 Cada elección del analista (versión, formato, titular) se registra como memoria silenciosa que el agente usa en conversaciones futuras para acercarse al estilo preferido del equipo, sin que el analista tenga que configurar nada manualmente.
 
