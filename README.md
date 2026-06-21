@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CM Agent
 
-## Getting Started
+Agente de community manager con IA para LinkedIn: genera, itera y programa contenido para Detecta Security mediante un flujo conversacional de varias fases, con aprendizaje silencioso de preferencias editoriales.
 
-First, run the development server:
+## Cómo funciona
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Analista (chat)
+     │
+     ▼
+Claude (Anthropic, con Web Search nativo)
+     │
+     ├─► Fase 1: propuesta de temas (evergreen + actualidad con fecha verificada)
+     ├─► Fase 2: ángulo sugerido (gancho, por qué ahora, emoción objetivo)
+     ├─► Fase 3: 2 versiones A/B por formato (Copy, Copy + imagen, Carrusel, PDF, Video)
+     └─► Fase 4: confirmación + ajustes iterativos
+     │
+     ▼
+Panel editable (titulares, copy, hashtags) ──► Calendario / Borradores (localStorage)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Cada elección del analista (versión, formato, titular) se registra como memoria silenciosa que el agente usa en conversaciones futuras para acercarse al estilo preferido del equipo, sin que el analista tenga que configurar nada manualmente.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- *Flujo en 4 fases* — temas, ángulo, versiones A/B, confirmación e iteración
+- *Feed de noticias en vivo* — RSS de medios de logística en México + búsqueda web, con caché diaria
+- *Calendario de contenido* — borradores, programados y publicados, con sección de publicados en el sidebar
+- *Memoria silenciosa* — aprende formato, versión y estilo de titular preferidos con el uso
+- *Configuración editable* — contexto de marca, tono y temas prioritarios desde la propia app
+- *Sesión persistente* — login con JWT de 30 días
 
-## Learn More
+## Setup
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cp .env.example .env.local   # completa tus credenciales
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Variables de entorno
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Variable | Descripción |
+|---|---|
+| `ANTHROPIC_API_KEY` | API key de Anthropic |
+| `APP_USERNAME` / `APP_PASSWORD` | Credenciales de acceso del analista |
+| `JWT_SECRET` | Secreto para firmar la sesión (genera un string aleatorio largo) |
+| `CRON_SECRET` | Protege el endpoint de refresco diario del feed de noticias |
 
-## Deploy on Vercel
+## Tech stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js (App Router)** — frontend y API routes
+- **Anthropic Claude (Sonnet 4.6)** — agente conversacional con Web Search nativo
+- **RSS + web scraping** — feed de noticias de logística en México
+- **Railway** — deploy + cron del feed de noticias
+- **localStorage** — persistencia de chats, calendario, memoria y configuración (sin base de datos)

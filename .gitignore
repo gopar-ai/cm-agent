@@ -36,6 +36,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local cache files
+/data
+
+# Claude Code local settings (may contain session command history)
+.claude/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
