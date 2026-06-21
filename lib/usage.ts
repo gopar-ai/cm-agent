@@ -1,7 +1,7 @@
 const USAGE_KEY = 'cm_daily_usage';
 const USAGE_EVENT = 'cm-usage-updated';
 
-export const DAILY_LIMIT = 7;
+export const DAILY_LIMIT = 3;
 
 type Usage = { date: string; count: number };
 
