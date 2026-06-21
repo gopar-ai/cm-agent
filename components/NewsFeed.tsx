@@ -43,11 +43,11 @@ export default function NewsFeed({ onUseForPost }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function loadNews(forceRefresh = false) {
+  async function loadNews() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(forceRefresh ? '/api/news?refresh=1' : '/api/news');
+      const res = await fetch('/api/news');
       if (!res.ok) throw new Error('Error al cargar noticias');
       const { news: items } = await res.json();
       setNews(items);
@@ -85,14 +85,6 @@ export default function NewsFeed({ onUseForPost }: Props) {
       <div className="px-4 py-4 border-b border-zinc-900 shrink-0">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-white font-semibold text-sm">📡 Feed de noticias</h2>
-          <button
-            onClick={() => loadNews(true)}
-            disabled={loading}
-            title="Refrescar"
-            className="text-zinc-400 hover:text-white disabled:opacity-50 text-sm transition-colors"
-          >
-            🔄
-          </button>
         </div>
 
         {/* Tabs */}
