@@ -24,11 +24,20 @@ Cada elección del analista (versión, formato, titular) se registra como memori
 ## Features
 
 - *Flujo en 4 fases* — temas, ángulo, versiones A/B, confirmación e iteración
-- *Feed de noticias en vivo* — RSS de medios de logística en México + búsqueda web, con caché diaria
+- *Feed de noticias en vivo* — RSS de medios de logística en México + búsqueda web, con caché en memoria de 6h y caché en disco diaria
 - *Calendario de contenido* — borradores, programados y publicados, con sección de publicados en el sidebar
 - *Memoria silenciosa* — aprende formato, versión y estilo de titular preferidos con el uso
 - *Configuración editable* — contexto de marca, tono y temas prioritarios desde la propia app
 - *Sesión persistente* — login con JWT de 30 días
+
+### Optimizaciones de costo
+
+- **Modelo por función**: el agente conversacional usa Claude Sonnet 4.6; la búsqueda del feed de noticias usa Claude Haiku 4.5 (más barato, suficiente para extraer titulares/fechas)
+- **System prompt compacto**: instrucciones densas sin perder reglas funcionales (~44% más corto que la versión inicial)
+- **Web Search acotado**: máximo 3 búsquedas por turno en el chat (`max_uses`)
+- **Caché del feed**: 6 horas en memoria + respaldo diario en disco antes de volver a buscar en vivo
+- **Historial acotado**: solo los últimos 10 mensajes de cada conversación se envían al modelo
+- **Memoria cacheada**: el resumen de preferencias del equipo solo se recalcula si hay entradas nuevas en `cm_memoria`
 
 ## Setup
 
@@ -50,7 +59,7 @@ npm run dev
 ## Tech stack
 
 - **Next.js (App Router)** — frontend y API routes
-- **Anthropic Claude (Sonnet 4.6)** — agente conversacional con Web Search nativo
+- **Anthropic Claude (Sonnet 4.6 + Haiku 4.5)** — agente conversacional (Sonnet) y búsqueda del feed de noticias (Haiku), ambos con Web Search nativo
 - **RSS + web scraping** — feed de noticias de logística en México
 - **Railway** — deploy + cron del feed de noticias
 - **localStorage** — persistencia de chats, calendario, memoria y configuración (sin base de datos)
