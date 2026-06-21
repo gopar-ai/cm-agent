@@ -43,6 +43,9 @@ yarn-error.log*
 # Claude Code local settings (may contain session command history)
 .claude/
 
+# local tooling (e.g. portable ffmpeg used for generating docs assets)
+/.tools
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
