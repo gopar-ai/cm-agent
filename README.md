@@ -1,6 +1,6 @@
 # CM Agent
 
-Agente de community manager con IA para LinkedIn: genera, itera y programa contenido para Detecta Security mediante un flujo conversacional de varias fases, con aprendizaje silencioso de preferencias editoriales.
+Agente community manager con IA: genera, itera y programa contenido mediante un flujo conversacional de varias fases, con aprendizaje silencioso de preferencias editoriales.
 
 ## Cómo funciona
 
